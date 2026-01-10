@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Form, Button, Row, Col, Card } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { APPLICATION_URL } from "../config.js";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/TradeJournalForm.scss";
 
@@ -102,7 +103,7 @@ export default function TradeJournalForm({ trader }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:4000/trades", {
+      const res = await fetch(`${APPLICATION_URL}/trades`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

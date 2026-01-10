@@ -47,6 +47,38 @@
       "rewardPips": "2.00",
       "rrRatio": "2.00",
       "createdAt": "2026-01-10T14:11:02.039Z"
+    },
+    {
+      "id": "c157",
+      "trader": "adi",
+      "date": "2026-01-10",
+      "pair": "EURUSD",
+      "direction": "BUY",
+      "entry": "2",
+      "stopLoss": "3",
+      "takeProfit": "4",
+      "result": "WIN",
+      "notes": "",
+      "riskPips": "1.00",
+      "rewardPips": "2.00",
+      "rrRatio": "2.00",
+      "createdAt": "2026-01-10T15:28:38.757Z"
+    },
+    {
+      "id": "2d5b",
+      "trader": "RAJMOHAN",
+      "date": "2026-01-10",
+      "pair": "EURUSD",
+      "direction": "BUY",
+      "entry": "32",
+      "stopLoss": "43",
+      "takeProfit": "43",
+      "result": "WIN",
+      "notes": "",
+      "riskPips": "11.00",
+      "rewardPips": "11.00",
+      "rrRatio": "1.00",
+      "createdAt": "2026-01-10T16:56:37.076Z"
     }
   ]
 }
