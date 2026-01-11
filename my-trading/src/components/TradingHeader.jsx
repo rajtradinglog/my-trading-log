@@ -7,6 +7,7 @@ import {
   Button,
   Form,
 } from "react-bootstrap";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function TradingHeader({ onUserChange }) {
   const MAX_TRADERS = 3;
@@ -20,6 +21,19 @@ function TradingHeader({ onUserChange }) {
 
   const allUsers = [...traders, "Guest"];
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleSelectUser = (user) => {
+    setSelectedUser(user);
+    onUserChange(user);
+
+    // If already on /view-data, re-navigate so ViewData can react
+    if (location.pathname === "/view-data") {
+      navigate("/view-data", { replace: true });
+    }
+  };
+
   const handleAddTrader = () => {
     const name = newTraderName.trim();
 
@@ -29,8 +43,7 @@ function TradingHeader({ onUserChange }) {
       return setError("Maximum 3 traders allowed");
 
     setTraders([...traders, name]);
-    setSelectedUser(name);
-    onUserChange(name);
+    handleSelectUser(name);
     setShowModal(false);
     setNewTraderName("");
     setError("");
@@ -55,10 +68,7 @@ function TradingHeader({ onUserChange }) {
                 <NavDropdown.Item
                   key={user}
                   active={user === selectedUser}
-                  onClick={() => {
-                    setSelectedUser(user);
-                    onUserChange(user);
-                  }}
+                  onClick={() => handleSelectUser(user)}
                   className="trading-header-dropdown-item"
                 >
                   {user}

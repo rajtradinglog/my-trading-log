@@ -15,7 +15,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<TradeJournalForm trader={trader} />} />
-          <Route path="/view-data" element={<ViewData />} />
+          <Route path="/view-data" element={<ViewData traderState={trader} />} />
         </Routes>
       </main>
       </div>

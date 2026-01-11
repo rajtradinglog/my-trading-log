@@ -7,6 +7,9 @@
 ───────────────────────────── */
 label{
   font-family: var(--themefont);
+  font-size: 17px;
+  font-weight: 500;
+  color: #808080;
 }
   .trading-header {
     width: 100%;
@@ -203,6 +206,7 @@ label{
           /* FORM ROW */
           .trade-form-row {
             align-items: center;
+            padding: 10px 0;
             &.trade-journal-metrics{
               padding-top:10px ;
               display: flex;
@@ -211,12 +215,30 @@ label{
             }
 
             label {
-            padding-top: 10px;
-              font-size: 0.8rem;
-              font-weight: 600;
+          
             }
             .trade-journal-col{
               padding-top:5px ;
+              .trade-journal-field{
+                display: flex;
+                flex-direction: column;
+                .trade-journal-radio-group{
+                  display:flex;
+                  align-items: center;
+                  .trade-journal-radio{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 5px;
+                    align-items: start;
+                    label{
+                      padding: 0px;
+                      color: black;
+                      font-size: 14px;
+                      
+                    }
+                  }
+                }
+              }
             }
 
             input,

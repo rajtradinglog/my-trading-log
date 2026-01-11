@@ -12,24 +12,26 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import { APPLICATION_URL } from "../config.js";
 
-export default function ViewData() {
+export default function ViewData({traderState}) {
   const navigate = useNavigate();
   const location = useLocation();
-  const trader = location.state?.trader || "Guest";
+  const trader = traderState || "Guest";
 
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  /* ---------------- FETCH TRADES ---------------- */
+  /* ---------------- FETCH TRADES (ONLY CHANGE) ---------------- */
   useEffect(() => {
     async function fetchTrades() {
       try {
         const res = await fetch(
-          `http://localhost:4000/trades?trader=${trader}`
+          `${APPLICATION_URL}/api/trades?trader=${encodeURIComponent(trader)}`
         );
         const data = await res.json();
         setTrades(data || []);
+        console.log("Fetched trades:", data); // debug
       } catch {
         setTrades([]);
       } finally {
@@ -55,59 +57,9 @@ export default function ViewData() {
     };
   }, [trades]);
 
-  /* ---------------- SUMMARY CONFIG ---------------- */
-  const summaryCards = [
-    { label: "Total Trades", value: stats.total },
-    { label: "Wins", value: stats.wins, className: "text-success" },
-    { label: "Losses", value: stats.losses, className: "text-danger" },
-    { label: "Win Rate", value: `${stats.winRate}%` },
-  ];
-
-  /* ---------------- CHART DATA ---------------- */
-  const rrChartData = trades.map((t, index) => ({
-    trade: index + 1,
-    rr: Number(t.rrRatio) || 0,
-  }));
-
-  const resultChartData = [
-    { name: "Wins", value: stats.wins },
-    { name: "Losses", value: stats.losses },
-  ];
-
-  /* ---------------- CHART CONFIG ---------------- */
-  const charts = [
-    {
-      title: "R:R Progression",
-      col: 8,
-      render: (
-        <LineChart data={rrChartData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="trade" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="rr" strokeWidth={2} />
-        </LineChart>
-      ),
-    },
-    {
-      title: "Win / Loss Breakdown",
-      col: 4,
-      render: (
-        <BarChart data={resultChartData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis allowDecimals={false} />
-          <Tooltip />
-          <Bar dataKey="value" />
-        </BarChart>
-      ),
-    },
-  ];
-
-  /* ---------------- UI ---------------- */
+  /* ---------------- UI (UNCHANGED) ---------------- */
   return (
-    <div className="view-data-container container ">
-      {/* TOP BAR */}
+    <div className="view-data-container container mt-4 mb-5">
       <div className="view-data-top-bar d-flex justify-content-between align-items-center mb-3">
         <div className="view-data-trader-label">
           Trader: <strong>{trader}</strong>
@@ -116,34 +68,57 @@ export default function ViewData() {
         <Button
           variant="outline-dark"
           size="sm"
+          className="view-data-form-btn"
           onClick={() => navigate("/")}
         >
           View Form
         </Button>
       </div>
 
-      {/* SUMMARY */}
-      <Row className="view-data-summary  g-3 mb-4">
-        {summaryCards.map((card) => (
-          <Col xs={6} md={3} key={card.label}>
-            <Card className="summary-card">
-              <Card.Body>
-                <small>{card.label}</small>
-                <h4 className={card.className || ""}>{card.value}</h4>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+      <Row className="view-data-summary mb-4">
+        <Col xs={6} md={3}>
+          <Card className="summary-card">
+            <Card.Body>
+              <small>Total Trades</small>
+              <h4>{stats.total}</h4>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col xs={6} md={3}>
+          <Card className="summary-card">
+            <Card.Body>
+              <small>Wins</small>
+              <h4 className="text-success">{stats.wins}</h4>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col xs={6} md={3}>
+          <Card className="summary-card">
+            <Card.Body>
+              <small>Losses</small>
+              <h4 className="text-danger">{stats.losses}</h4>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col xs={6} md={3}>
+          <Card className="summary-card">
+            <Card.Body>
+              <small>Win Rate</small>
+              <h4>{stats.winRate}%</h4>
+            </Card.Body>
+          </Card>
+        </Col>
       </Row>
 
-      {/* LOADING */}
       {loading && (
         <div className="text-center py-5">
           <Spinner />
         </div>
       )}
 
-      {/* EMPTY STATE */}
       {!loading && trades.length === 0 && (
         <Card className="view-data-empty">
           <Card.Body className="text-center text-muted">
@@ -152,21 +127,51 @@ export default function ViewData() {
         </Card>
       )}
 
-      {/* CHARTS */}
       {!loading && trades.length > 0 && (
         <Row className="mb-4">
-          {charts.map((chart) => (
-            <Col md={chart.col} key={chart.title}>
-              <Card className="view-data-chart-card">
-                <Card.Header>{chart.title}</Card.Header>
-                <Card.Body style={{ height: 300 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    {chart.render}
-                  </ResponsiveContainer>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
+          <Col md={8}>
+            <Card className="view-data-chart-card">
+              <Card.Header>R:R Progression</Card.Header>
+              <Card.Body style={{ height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={trades.map((t, i) => ({
+                      trade: i + 1,
+                      rr: Number(t.rrRatio) || 0,
+                    }))}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="trade" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="rr" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          <Col md={4}>
+            <Card className="view-data-chart-card">
+              <Card.Header>Win / Loss Breakdown</Card.Header>
+              <Card.Body style={{ height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={[
+                      { name: "Wins", value: stats.wins },
+                      { name: "Losses", value: stats.losses },
+                    ]}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Bar dataKey="value" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card.Body>
+            </Card>
+          </Col>
         </Row>
       )}
     </div>

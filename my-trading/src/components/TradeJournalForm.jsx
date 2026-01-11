@@ -103,7 +103,7 @@ export default function TradeJournalForm({ trader }) {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`${APPLICATION_URL}/trades`, {
+      const res = await fetch(`${APPLICATION_URL}/api/trades`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
